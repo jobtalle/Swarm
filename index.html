@@ -3,6 +3,9 @@
 	<head>
 		<title>Swarm</title>
 		<link rel="stylesheet" href="css/style.css">
+		<script src="js/swarm.js"></script>
+		<script src="js/agent.js"></script>
+		<script src="js/view.js"></script>
 	</head>
 	<body>
 		<div id="wrapper">
@@ -10,5 +13,6 @@
 				<canvas id="renderer" width=800 height=600></canvas>
 			</div>
 		</div>
+		<script>new SwarmSim(document.getElementById("renderer")).start();</script>
 	</body>
 </html>
