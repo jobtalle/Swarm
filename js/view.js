@@ -6,8 +6,7 @@ function View(width, height) {
 	this.scale = 1;
 }
 
-View
-.prototype = {
+View.prototype = {
 	FIT_MARGIN: 80,
 	
 	apply(context) {
@@ -36,9 +35,15 @@ View
 				xMax = agent.x;
 			if(yMax == undefined || agent.y > yMax)
 				yMax = agent.y;
-			
-			this.x = xMin + (xMax - xMin) * 0.5;
-			this.y = yMin + (yMax - yMin) * 0.5;
 		}
+		
+		var regionWidth = xMax - xMin;
+		var regionHeight = yMax - yMin;
+		
+		this.x = xMin + regionWidth * 0.5;
+		this.y = yMin + regionHeight * 0.5;
+		this.scale = Math.min(
+			this.width / (regionWidth + this.FIT_MARGIN * 2),
+			this.height / (regionHeight +  + this.FIT_MARGIN * 2));
 	}
 }

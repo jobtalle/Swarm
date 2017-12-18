@@ -1,18 +1,30 @@
-function Agent(x, y) {
+function Agent(
+	x,
+	y,
+	angle,
+	radiusRepulsion = 32,
+	radiusAlignment = 48,
+	radiusAttraction = 80,
+	viewAngle = Math.PI * 1.3) {
 	this.x = x;
 	this.y = y;
-	this.angle = 0.4;
+	this.angle = angle;
 	this.speed = 64;
+	this.radiusRepulsion = radiusRepulsion;
+	this.radiusAlignment = radiusAlignment;
+	this.radiusAttraction = radiusAttraction;
+	this.viewAngle = viewAngle;
 }
 
 Agent.prototype = {
 	COLOR_FILL: "#6666ff",
 	COLOR_BORDER: "#333333",
+	COLOR_REGION: "#AAAAAA",
 	LENGTH: 24,
 	WIDTH: 20,
 	
-	update(context, timeStep) {
-		this.move(timeStep);
+	update(context, timeStep, others) {
+		this.move(timeStep, others);
 		this.draw(context);
 	},
 	
@@ -20,6 +32,22 @@ Agent.prototype = {
 		context.save();
 		context.translate(this.x, this.y);
 		context.rotate(this.angle);
+		
+		context.strokeStyle = this.COLOR_REGION;
+		
+		context.beginPath();
+		context.arc(0, 0, this.radiusRepulsion, 0, Math.PI * 2);
+		context.stroke();
+		
+		context.beginPath();
+		context.arc(0, 0, this.radiusAlignment, 0, Math.PI * 2);
+		context.stroke();
+		
+		context.beginPath();
+		context.moveTo(0, 0);
+		context.arc(0, 0, this.radiusAttraction, -this.viewAngle * 0.5, this.viewAngle * 0.5);
+		context.lineTo(0, 0);
+		context.stroke();
 		
 		context.fillStyle = this.COLOR_FILL;
 		context.strokeStyle = this.COLOR_BORDER;
@@ -36,7 +64,7 @@ Agent.prototype = {
 		context.restore();
 	},
 	
-	move(timeStep) {
+	move(timeStep, agents) {
 		var stepSize = timeStep * this.speed;
 		
 		this.x += Math.cos(this.angle) * stepSize;

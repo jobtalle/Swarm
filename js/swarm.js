@@ -3,14 +3,15 @@ function SwarmSim(canvas) {
 	this.width = canvas.width;
 	this.height = canvas.height;
 	this.view = new View(this.width, this.height);
-	this.agents = [
-		new Agent(50, 100),
-		new Agent(100, 150)
-	];
-	this.lastDate = new Date();
+	this.agents = [];
 	
-	this.outerRadius = 64;
-	this.innerRadius = 32;
+	for(var i = 0; i < 30; ++i)
+		this.agents.push(new Agent(
+			Math.random() * this.width,
+			Math.random() * this.height,
+			Math.random() * Math.PI * 2));
+	
+	this.lastDate = new Date();
 }
 
 SwarmSim.prototype = {
@@ -40,6 +41,6 @@ SwarmSim.prototype = {
 	
 	update(context, timeStep) {
 		for(var i = 0; i < this.agents.length; ++i)
-			this.agents[i].update(context, timeStep);
+			this.agents[i].update(context, timeStep, this.agents);
 	}
 }
