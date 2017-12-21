@@ -27,14 +27,14 @@ View.prototype = {
 		for(var i = 0; i < agents.length; ++i) {
 			var agent = agents[i];
 			
-			if(xMin == undefined || agent.x < xMin)
-				xMin = agent.x;
-			if(yMin == undefined || agent.y < yMin)
-				yMin = agent.y;
-			if(xMax == undefined || agent.x > xMax)
-				xMax = agent.x;
-			if(yMax == undefined || agent.y > yMax)
-				yMax = agent.y;
+			if(xMin == undefined || agent.position.x < xMin)
+				xMin = agent.position.x;
+			if(yMin == undefined || agent.position.y < yMin)
+				yMin = agent.position.y;
+			if(xMax == undefined || agent.position.x > xMax)
+				xMax = agent.position.x;
+			if(yMax == undefined || agent.position.y > yMax)
+				yMax = agent.position.y;
 		}
 		
 		var regionWidth = xMax - xMin;

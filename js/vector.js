@@ -4,8 +4,12 @@ function Vector(x = 0, y = 0) {
 }
 
 Vector.prototype = {
+	toString() {
+		return "(" + this.x + ", " + this.y + ")";
+	},
+	
 	add(vector) {
-		return new Vector(x + vector.x, y + vector.y);
+		return new Vector(this.x + vector.x, this.y + vector.y);
 	},
 	
 	subtract(vector) {
@@ -13,11 +17,11 @@ Vector.prototype = {
 	},
 	
 	negate() {
-		return new Vector(-x, -y);
+		return new Vector(-this.x, -this.y);
 	},
 	
 	dot(vector) {
-		return new Vector(x * x, y * y);
+		return this.x * vector.x + this.y * vector.y;
 	},
 	
 	length() {
@@ -25,13 +29,14 @@ Vector.prototype = {
 	},
 	
 	multiply(scalar) {
-		return new Vector(x * scalar, y * scalar);
+		return new Vector(this.x * scalar, this.y * scalar);
 	},
 	
 	divide(scalar) {
-		var factor = 1 / scalar;
-		
-		return new Vector(x * factor, y * factor);
+		if(scalar == 0)
+			return new Vector(0, 0);
+		else
+			return this.multiply(1 / scalar);
 	},
 	
 	normalize() {
@@ -39,10 +44,10 @@ Vector.prototype = {
 	},
 	
 	angle() {
-		return Math.atan2(y, x);
+		return Math.atan2(this.y, this.x);
 	},
 	
-	fromAngle(angle, length) {
+	fromAngle(angle, length = 1) {
 		return new Vector(Math.cos(angle) * length, Math.sin(angle) * length);
 	}
 }
