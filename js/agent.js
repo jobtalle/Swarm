@@ -5,7 +5,7 @@ function Agent(
 	viewAngle = Math.PI * 1.3) {
 	this.position = position;
 	this.velocity = velocity;
-	this.baseSpeed = 32;
+	this.baseSpeed = 48;
 	this.viewAngle = viewAngle;
 	this.neighborsRepulsion = [];
 	this.neighborsAlignment = [];
@@ -15,15 +15,16 @@ function Agent(
 Agent.prototype = {	
 	RADIUS_REPULSION: 32,
 	RADIUS_ALIGNMENT: 48,
-	RADIUS_ATTRACTION: 100,
-	INFLUENCE_REPULSION: 0.16,
-	INFLUENCE_ALIGNMENT: 0.16,
-	INFLUENCE_ATTRACTION: 0.16,
+	RADIUS_ATTRACTION: 64,
+	INFLUENCE_REPULSION: 7,
+	INFLUENCE_ALIGNMENT: 3,
+	INFLUENCE_ATTRACTION: 1,
 	COLOR_FILL: "#6666ff",
 	COLOR_BORDER: "#333333",
 	COLOR_REGION: "#aaaaaa",
 	LENGTH: 24,
 	WIDTH: 20,
+	WRAP_RADIUS: 24,
 	
 	process(agents) {
 		for(var firstIndex = 0; firstIndex < agents.length; ++firstIndex) {
@@ -48,13 +49,12 @@ Agent.prototype = {
 			}
 			else if(squaredDistance < this.RADIUS_ALIGNMENT * this.RADIUS_ALIGNMENT) {
 				var strength = (Math.sqrt(squaredDistance) - this.RADIUS_REPULSION) / (this.RADIUS_ALIGNMENT - this.RADIUS_REPULSION);
-				var velocity = second.velocity.normalize().add(first.velocity.normalize()).multiply(0.5 * strength);
 				
-				first.neighborsAlignment.push(velocity);
-				second.neighborsAlignment.push(velocity);
+				first.neighborsAlignment.push(second.velocity.normalize().multiply(strength));
+				second.neighborsAlignment.push(first.velocity.normalize().multiply(strength));
 			}
 			else {
-				var strength = (Math.sqrt(squaredDistance) - this.RADIUS_ALIGNMENT) / (this.RADIUS_ATTRACTION - this.RADIUS_ALIGNMENT);
+				var strength = 1 - ((Math.sqrt(squaredDistance) - this.RADIUS_ALIGNMENT) / (this.RADIUS_ATTRACTION - this.RADIUS_ALIGNMENT));
 				var attraction = delta.normalize().multiply(strength);
 				
 				// TODO: Check view angle for each agent
@@ -74,10 +74,10 @@ Agent.prototype = {
 		while(this.neighborsRepulsion.length > 0) {
 			var neighbor = this.neighborsRepulsion.pop();
 			
-			repulsion = repulsion.add(neighbor.normalize());
+			repulsion = repulsion.add(neighbor);
 		}
 		
-		this.velocity = this.velocity.subtract(repulsion.multiply(1));
+		this.velocity = this.velocity.subtract(repulsion.multiply(this.INFLUENCE_REPULSION));
 	},
 	
 	applyAlignment() {
@@ -89,10 +89,10 @@ Agent.prototype = {
 		while(this.neighborsAlignment.length > 0) {
 			var neighbor = this.neighborsAlignment.pop();
 			
-			alignment = alignment.add(neighbor.normalize());
+			alignment = alignment.add(neighbor);
 		}
 		
-		this.velocity = this.velocity.add(alignment.multiply(1));
+		this.velocity = this.velocity.add(alignment.multiply(this.INFLUENCE_ALIGNMENT));
 	},
 	
 	applyAttraction() {
@@ -104,10 +104,10 @@ Agent.prototype = {
 		while(this.neighborsAttraction.length > 0) {
 			var neighbor = this.neighborsAttraction.pop();
 			
-			attraction = attraction.add(neighbor.normalize());
+			attraction = attraction.add(neighbor);
 		}
 		
-		this.velocity = this.velocity.add(attraction.multiply(0.3));
+		this.velocity = this.velocity.add(attraction.multiply(this.INFLUENCE_ATTRACTION));
 	},
 	
 	react() {
@@ -118,8 +118,8 @@ Agent.prototype = {
 		this.applyAttraction();
 	},
 	
-	update(context, timeStep, others) {
-		this.move(timeStep, others);
+	update(context, timeStep, width, height) {
+		this.move(timeStep, width, height);
 		this.draw(context);
 	},
 	
@@ -127,7 +127,7 @@ Agent.prototype = {
 		context.save();
 		context.translate(this.position.x, this.position.y);
 		context.rotate(this.velocity.angle());
-		
+		/*
 		context.strokeStyle = this.COLOR_REGION;
 		
 		context.beginPath();
@@ -143,7 +143,7 @@ Agent.prototype = {
 		context.arc(0, 0, this.RADIUS_ATTRACTION, -this.viewAngle * 0.5, this.viewAngle * 0.5);
 		context.lineTo(0, 0);
 		context.stroke();
-		
+		*/
 		context.fillStyle = this.COLOR_FILL;
 		context.strokeStyle = this.COLOR_BORDER;
 		
@@ -159,12 +159,18 @@ Agent.prototype = {
 		context.restore();
 	},
 	
-	move(timeStep, agents) {
+	move(timeStep, width, height) {
 		var stepSize = timeStep * this.speed;
 		
 		this.position = this.position.add(this.velocity.multiply(timeStep));
 		
-		this.x += Math.cos(this.angle) * stepSize;
-		this.y += Math.sin(this.angle) * stepSize;
+		if(this.position.x < -this.WRAP_RADIUS)
+			this.position.x += width + 2 * this.WRAP_RADIUS;
+		if(this.position.y < -this.WRAP_RADIUS)
+			this.position.y += height + 2 * this.WRAP_RADIUS;
+		if(this.position.x > width + this.WRAP_RADIUS)
+			this.position.x -= width + 2 * this.WRAP_RADIUS;
+		if(this.position.y > height + this.WRAP_RADIUS)
+			this.position.y -= height + 2 * this.WRAP_RADIUS;
 	}
 }
