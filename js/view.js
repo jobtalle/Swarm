@@ -19,6 +19,7 @@ View.prototype = {
 	},
 	
 	fit(agents) {
+		return;
 		var xMin = undefined;
 		var yMin = undefined;
 		var xMax = undefined;
@@ -44,6 +45,6 @@ View.prototype = {
 		this.y = yMin + regionHeight * 0.5;
 		this.scale = Math.min(
 			this.width / (regionWidth + this.FIT_MARGIN * 2),
-			this.height / (regionHeight +  + this.FIT_MARGIN * 2));
+			this.height / (regionHeight + this.FIT_MARGIN * 2));
 	}
 }

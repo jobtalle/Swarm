@@ -5,7 +5,7 @@ function SwarmSim(canvas) {
 	this.view = new View(this.width, this.height);
 	this.agents = [];
 	
-	for(var i = 0; i < 6; ++i)
+	for(var i = 0; i < 8; ++i)
 		this.agents.push(new Agent());
 	
 	this.lastDate = new Date();

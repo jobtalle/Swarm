@@ -27,34 +27,41 @@ Agent.prototype = {
 	
 	process(agents) {
 		for(var firstIndex = 0; firstIndex < agents.length; ++firstIndex) {
-			var first = agents[firstIndex];
+			for(var secondIndex = firstIndex + 1; secondIndex < agents.length; ++secondIndex)
+				Agent.prototype.interact(agents[firstIndex], agents[secondIndex]);
 			
-			for(var secondIndex = firstIndex + 1; secondIndex < agents.length; ++secondIndex) {
-				var second = agents[secondIndex];
-				var delta = second.position.subtract(first.position);
-				var squaredDistance = delta.dot(delta);
+			agents[firstIndex].react();
+		}
+	},
+	
+	interact(first, second) {
+		var delta = second.position.subtract(first.position);
+		var squaredDistance = delta.dot(delta);
+		
+		if(squaredDistance < this.RADIUS_ATTRACTION * this.RADIUS_ATTRACTION) {
+			if(squaredDistance < this.RADIUS_REPULSION * this.RADIUS_REPULSION) {
+				var strength = 1 - Math.sqrt(squaredDistance) / this.RADIUS_REPULSION;
+				var repulsion = delta.normalize().multiply(strength);
 				
-				if(squaredDistance < this.RADIUS_ATTRACTION * this.RADIUS_ATTRACTION) {
-					if(squaredDistance < this.RADIUS_REPULSION * this.RADIUS_REPULSION) {
-						var position = second.position.subtract(first.position);
-						
-						first.neighborsRepulsion.push(position);
-						second.neighborsRepulsion.push(position.negate());
-					}
-					else if(squaredDistance < this.RADIUS_ALIGNMENT * this.RADIUS_ALIGNMENT) {
-						first.neighborsAlignment.push(second.velocity);
-						second.neighborsAlignment.push(first.velocity);
-					}
-					else {
-						var position = second.position.subtract(first.position);
-						
-						first.neighborsAttraction.push(position);
-						second.neighborsAttraction.push(position.negate());
-					}
-				}
+				first.neighborsRepulsion.push(repulsion);
+				second.neighborsRepulsion.push(repulsion.negate());
 			}
-			
-			first.react();
+			else if(squaredDistance < this.RADIUS_ALIGNMENT * this.RADIUS_ALIGNMENT) {
+				var strength = (Math.sqrt(squaredDistance) - this.RADIUS_REPULSION) / (this.RADIUS_ALIGNMENT - this.RADIUS_REPULSION);
+				var velocity = second.velocity.normalize().add(first.velocity.normalize()).multiply(0.5 * strength);
+				
+				first.neighborsAlignment.push(velocity);
+				second.neighborsAlignment.push(velocity);
+			}
+			else {
+				var strength = (Math.sqrt(squaredDistance) - this.RADIUS_ALIGNMENT) / (this.RADIUS_ATTRACTION - this.RADIUS_ALIGNMENT);
+				var attraction = delta.normalize().multiply(strength);
+				
+				// TODO: Check view angle for each agent
+				
+				first.neighborsAttraction.push(attraction);
+				second.neighborsAttraction.push(attraction.negate());
+			}
 		}
 	},
 	
@@ -70,7 +77,7 @@ Agent.prototype = {
 			repulsion = repulsion.add(neighbor.normalize());
 		}
 		
-		this.velocity = this.velocity.subtract(repulsion.multiply(4));
+		this.velocity = this.velocity.subtract(repulsion.multiply(1));
 	},
 	
 	applyAlignment() {
@@ -100,7 +107,7 @@ Agent.prototype = {
 			attraction = attraction.add(neighbor.normalize());
 		}
 		
-		this.velocity = this.velocity.add(attraction.multiply(1));
+		this.velocity = this.velocity.add(attraction.multiply(0.3));
 	},
 	
 	react() {
@@ -151,8 +158,6 @@ Agent.prototype = {
 		
 		context.restore();
 	},
-	
-	
 	
 	move(timeStep, agents) {
 		var stepSize = timeStep * this.speed;
