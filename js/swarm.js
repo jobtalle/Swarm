@@ -5,14 +5,19 @@ function SwarmSim(canvas) {
 	this.view = new View(this.width, this.height);
 	this.agents = [];
 	
-	for(var i = 0; i < 32; ++i)
-		this.agents.push(new Agent(new Vector(this.width / 2, this.height / 2)));
+	this.configure();
 	
-	this.lastDate = new Date();
+	for(var i = 0; i < 70; ++i)
+		this.agents.push(new Agent(new Vector(this.width / 2, this.height / 2)));
 }
 
 SwarmSim.prototype = {
+	configure() {
+		this.configuration = new Configuration();
+	},
+	
 	start() {
+		this.lastDate = new Date();
 		this.animate();
 	},
 	

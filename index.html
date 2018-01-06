@@ -4,6 +4,7 @@
 		<title>Swarm</title>
 		<link rel="stylesheet" href="css/style.css">
 		<script src="js/swarm.js"></script>
+		<script src="js/configuration.js"></script>
 		<script src="js/agent.js"></script>
 		<script src="js/view.js"></script>
 		<script src="js/vector.js"></script>
@@ -11,9 +12,94 @@
 	<body>
 		<div id="wrapper">
 			<div id="content">
-				<canvas id="renderer" width=1024 height=768></canvas>
+				<canvas id="renderer" width=512 height=512></canvas>
+				<div id="controls">
+					<table>
+						<tr>
+							<td>Agents:</td>
+							<td>
+								<input class="input-slider" type="range" min="0" max="250" value="32" id="input-agent-count" onchange="sim.configure();">
+							</td>
+							<td>
+								<input class="input-value" type="text" readonly id="value-agent-count">
+							</td>
+						</tr>
+						<tr>
+							<td>Agent speed:</td>
+							<td>
+								<input class="input-slider" type="range" min="0" max="100" value="40" id="input-agent-speed" onchange="sim.configure();">
+							</td>
+							<td>
+								<input class="input-value" type="text" readonly id="value-agent-speed">
+							</td>
+						</tr>
+						<tr>
+							<td>Repulsion zone:</td>
+							<td>
+								<input class="input-slider" type="range" min="0" max="64" value="24" id="input-zone-repulsion" onchange="sim.configure();">
+							</td>
+							<td>
+								<input class="input-value" type="text" readonly id="value-zone-repulsion">
+							</td>
+						</tr>
+						<tr>
+							<td>Alignment zone:</td>
+							<td>
+								<input class="input-slider" type="range" min="0" max="64" value="8" id="input-zone-alignment" onchange="sim.configure();">
+							</td>
+							<td>
+								<input class="input-value" type="text" readonly id="value-zone-alignment">
+							</td>
+						</tr>
+						<tr>
+							<td>Attraction zone:</td>
+							<td>
+								<input class="input-slider" type="range" min="0" max="64" value="16" id="input-zone-attraction" onchange="sim.configure();">
+							</td>
+							<td>
+								<input class="input-value" type="text" readonly id="value-zone-attraction">
+							</td>
+						</tr>
+						<tr>
+							<td>Repulsion strength:</td>
+							<td>
+								<input class="input-slider" type="range" min="0" max="10" step="0.25" value="7" id="input-strength-repulsion" onchange="sim.configure();">
+							</td>
+							<td>
+								<input class="input-value" type="text" readonly id="value-strength-repulsion">
+							</td>
+						</tr>
+						<tr>
+							<td>Alignment strength:</td>
+							<td>
+								<input class="input-slider" type="range" min="0" max="10" step="0.25" value="3" id="input-strength-alignment" onchange="sim.configure();">
+							</td>
+							<td>
+								<input class="input-value" type="text" readonly id="value-strength-alignment">
+							</td>
+						</tr>
+						<tr>
+							<td>Attraction strength:</td>
+							<td>
+								<input class="input-slider" type="range" min="0" max="10" step="0.25" value="1" id="input-strength-attraction" onchange="sim.configure();">
+							</td>
+							<td>
+								<input class="input-value" type="text" readonly id="value-strength-attraction">
+							</td>
+						</tr>
+						<tr>
+							<td>Gravitation strength</td>
+							<td>
+								<input class="input-slider" type="range" min="0" max="10" step="0.25" value="0.5" id="input-strength-gravitation" onchange="sim.configure();">
+							</td>
+							<td>
+								<input class="input-value" type="text" readonly id="value-strength-gravitation">
+							</td>
+						</tr>
+					</table>
+				</div>
 			</div>
 		</div>
-		<script>new SwarmSim(document.getElementById("renderer")).start();</script>
 	</body>
+	<script>sim = new SwarmSim(document.getElementById("renderer")); sim.start();</script>
 </html>

@@ -1,11 +1,11 @@
 function Agent(
 	position = new Vector(0, 0),
 	velocity = Vector.prototype.fromAngle(Math.random() * Math.PI * 2),
-	baseSpeed = 32,
+	baseSpeed = 40,
 	viewAngle = Math.PI * 1.3) {
 	this.position = position;
 	this.velocity = velocity;
-	this.baseSpeed = 48;
+	this.baseSpeed = 32;
 	this.viewAngle = viewAngle;
 	this.neighborsRepulsion = [];
 	this.neighborsAlignment = [];
@@ -13,18 +13,19 @@ function Agent(
 }
 
 Agent.prototype = {	
-	RADIUS_REPULSION: 32,
-	RADIUS_ALIGNMENT: 48,
-	RADIUS_ATTRACTION: 64,
+	RADIUS_REPULSION: 24,
+	RADIUS_ALIGNMENT: 32,
+	RADIUS_ATTRACTION: 48,
 	INFLUENCE_REPULSION: 7,
 	INFLUENCE_ALIGNMENT: 3,
 	INFLUENCE_ATTRACTION: 1,
+	INFLUENCE_GRAVITY: 0.5,
 	COLOR_FILL: "#6666ff",
 	COLOR_BORDER: "#333333",
 	COLOR_REGION: "#aaaaaa",
-	LENGTH: 24,
-	WIDTH: 20,
-	WRAP_RADIUS: 24,
+	LENGTH: 12,
+	WIDTH: 10,
+	WRAP_RADIUS: 12,
 	
 	process(agents) {
 		for(var firstIndex = 0; firstIndex < agents.length; ++firstIndex) {
@@ -110,12 +111,17 @@ Agent.prototype = {
 		this.velocity = this.velocity.add(attraction.multiply(this.INFLUENCE_ATTRACTION));
 	},
 	
+	applyGravity() {
+		this.velocity = this.velocity.add(this.position.subtract(new Vector(256, 256)).normalize().negate().multiply(this.INFLUENCE_GRAVITY));
+	},
+	
 	react() {
 		this.velocity = this.velocity.normalize().multiply(this.baseSpeed);
 		
 		this.applyRepulsion();
 		this.applyAlignment();
 		this.applyAttraction();
+		this.applyGravity();
 	},
 	
 	update(context, timeStep, width, height) {
@@ -153,8 +159,8 @@ Agent.prototype = {
 		context.lineTo(0, 0);
 		context.lineTo(-this.LENGTH * 0.5, this.WIDTH * 0.5);
 		context.lineTo(this.LENGTH * 0.5, 0);
-		context.fill();
 		context.stroke();
+		context.fill();
 		
 		context.restore();
 	},
