@@ -56,7 +56,10 @@ SwarmSim.prototype = {
 	
 	update(context, timeStep) {
 		Agent.prototype.process(this.agents, this.configuration);
-		
+        
+		context.fillStyle = Agent.prototype.COLOR_FILL;
+		context.strokeStyle = Agent.prototype.COLOR_BORDER;
+        
 		for(var i = 0; i < this.agents.length; ++i)
 			this.agents[i].update(context, timeStep, this.width, this.height);
 	}
