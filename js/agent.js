@@ -34,33 +34,36 @@ Agent.prototype = {
 	
 	interact(first, second, configuration) {
 		var delta = second.position.subtract(first.position);
-		var distance = Math.sqrt(delta.dot(delta));
+		var squaredDistance = delta.dot(delta);
+		
+		if(squaredDistance > configuration.radiusAttraction * configuration.radiusAttraction)
+			return;
+		
+		var distance = Math.sqrt(squaredDistance);
         
-		if(distance < configuration.radiusAttraction) {
-			if(distance < configuration.radiusRepulsion) {
-				var strength = 1 - distance / configuration.radiusRepulsion;
-				var repulsion = delta.normalize().multiply(strength);
-				
-				first.neighborsRepulsion.push(repulsion);
-				second.neighborsRepulsion.push(repulsion.negate());
-			}
-			else if(distance < configuration.radiusAlignment) {
-				var strength = (distance - configuration.radiusRepulsion) / (configuration.radiusAlignment - configuration.radiusRepulsion);
-				
-				first.neighborsAlignment.push(second.velocity.normalize().multiply(strength));
-				second.neighborsAlignment.push(first.velocity.normalize().multiply(strength));
-			}
-			else {
-				var normalizedDelta = delta.normalize();
-                var strength = 1 - ((distance - configuration.radiusAlignment) / (configuration.radiusAttraction - configuration.radiusAlignment));
-				var attraction = normalizedDelta.multiply(strength);
-				
-                if(Math.acos(first.velocity.normalize().dot(normalizedDelta)) < configuration.angleAttraction)
-				    first.neighborsAttraction.push(attraction);
-                
-                if(Math.acos(second.velocity.normalize().dot(normalizedDelta.negate())) < configuration.angleAttraction)
-				    second.neighborsAttraction.push(attraction.negate());
-			}
+		if(distance < configuration.radiusRepulsion) {
+			var strength = 1 - distance / configuration.radiusRepulsion;
+			var repulsion = delta.normalize().multiply(strength);
+			
+			first.neighborsRepulsion.push(repulsion);
+			second.neighborsRepulsion.push(repulsion.negate());
+		}
+		else if(distance < configuration.radiusAlignment) {
+			var strength = (distance - configuration.radiusRepulsion) / (configuration.radiusAlignment - configuration.radiusRepulsion);
+			
+			first.neighborsAlignment.push(second.velocity.normalize().multiply(strength));
+			second.neighborsAlignment.push(first.velocity.normalize().multiply(strength));
+		}
+		else {
+			var normalizedDelta = delta.normalize();
+			var strength = 1 - ((distance - configuration.radiusAlignment) / (configuration.radiusAttraction - configuration.radiusAlignment));
+			var attraction = normalizedDelta.multiply(strength);
+			
+			if(Math.acos(first.velocity.normalize().dot(normalizedDelta)) < configuration.angleAttraction)
+				first.neighborsAttraction.push(attraction);
+			
+			if(Math.acos(second.velocity.normalize().dot(normalizedDelta.negate())) < configuration.angleAttraction)
+				second.neighborsAttraction.push(attraction.negate());
 		}
 	},
 	
