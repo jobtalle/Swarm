@@ -1,25 +1,16 @@
-function Agent(
+ function Agent(
 	position = new Vector(0, 0),
 	velocity = Vector.prototype.fromAngle(Math.random() * Math.PI * 2),
-	baseSpeed = 40,
 	viewAngle = Math.PI * 1.3) {
 	this.position = position;
 	this.velocity = velocity;
-	this.baseSpeed = 32;
 	this.viewAngle = viewAngle;
 	this.neighborsRepulsion = [];
 	this.neighborsAlignment = [];
 	this.neighborsAttraction = [];
 }
 
-Agent.prototype = {	
-	RADIUS_REPULSION: 24,
-	RADIUS_ALIGNMENT: 32,
-	RADIUS_ATTRACTION: 48,
-	INFLUENCE_REPULSION: 7,
-	INFLUENCE_ALIGNMENT: 3,
-	INFLUENCE_ATTRACTION: 1,
-	INFLUENCE_GRAVITY: 0.5,
+Agent.prototype = {
 	COLOR_FILL: "#6666ff",
 	COLOR_BORDER: "#333333",
 	COLOR_REGION: "#aaaaaa",
@@ -27,36 +18,36 @@ Agent.prototype = {
 	WIDTH: 10,
 	WRAP_RADIUS: 12,
 	
-	process(agents) {
+	process(agents, configuration) {
 		for(var firstIndex = 0; firstIndex < agents.length; ++firstIndex) {
 			for(var secondIndex = firstIndex + 1; secondIndex < agents.length; ++secondIndex)
-				Agent.prototype.interact(agents[firstIndex], agents[secondIndex]);
+				Agent.prototype.interact(agents[firstIndex], agents[secondIndex], configuration);
 			
-			agents[firstIndex].react();
+			agents[firstIndex].react(configuration);
 		}
 	},
 	
-	interact(first, second) {
+	interact(first, second, configuration) {
 		var delta = second.position.subtract(first.position);
 		var squaredDistance = delta.dot(delta);
-		
-		if(squaredDistance < this.RADIUS_ATTRACTION * this.RADIUS_ATTRACTION) {
-			if(squaredDistance < this.RADIUS_REPULSION * this.RADIUS_REPULSION) {
-				var strength = 1 - Math.sqrt(squaredDistance) / this.RADIUS_REPULSION;
+        
+		if(squaredDistance < configuration.radiusAttraction * configuration.radiusAttraction) {
+			if(squaredDistance < configuration.radiusRepulsion * configuration.radiusRepulsion) {
+				var strength = 1 - Math.sqrt(squaredDistance) / configuration.radiusRepulsion;
 				var repulsion = delta.normalize().multiply(strength);
 				
 				first.neighborsRepulsion.push(repulsion);
 				second.neighborsRepulsion.push(repulsion.negate());
 			}
-			else if(squaredDistance < this.RADIUS_ALIGNMENT * this.RADIUS_ALIGNMENT) {
-				var strength = (Math.sqrt(squaredDistance) - this.RADIUS_REPULSION) / (this.RADIUS_ALIGNMENT - this.RADIUS_REPULSION);
+			else if(squaredDistance < configuration.radiusAlignment * configuration.radiusAlignment) {
+				var strength = (Math.sqrt(squaredDistance) - configuration.radiusRepulsion) / (configuration.radiusAlignment - configuration.radiusRepulsion);
 				
 				first.neighborsAlignment.push(second.velocity.normalize().multiply(strength));
 				second.neighborsAlignment.push(first.velocity.normalize().multiply(strength));
 			}
 			else {
 				var normalizedDelta = delta.normalize();
-                var strength = 1 - ((Math.sqrt(squaredDistance) - this.RADIUS_ALIGNMENT) / (this.RADIUS_ATTRACTION - this.RADIUS_ALIGNMENT));
+                var strength = 1 - ((Math.sqrt(squaredDistance) - configuration.radiusAlignment) / (configuration.radiusAttraction - configuration.radiusAlignment));
 				var attraction = normalizedDelta.multiply(strength);
 				
                 if(Math.acos(first.velocity.normalize().dot(normalizedDelta)) < first.viewAngle * 0.5)
@@ -68,7 +59,7 @@ Agent.prototype = {
 		}
 	},
 	
-	applyRepulsion() {
+	applyRepulsion(configuration) {
 		if(this.neighborsRepulsion.length == 0)
 			return;
 		
@@ -80,10 +71,10 @@ Agent.prototype = {
 			repulsion = repulsion.add(neighbor);
 		}
 		
-		this.velocity = this.velocity.subtract(repulsion.multiply(this.INFLUENCE_REPULSION));
+		this.velocity = this.velocity.subtract(repulsion.multiply(configuration.strengthRepulsion));
 	},
 	
-	applyAlignment() {
+	applyAlignment(configuration) {
 		if(this.neighborsAlignment.length == 0)
 			return;
 		
@@ -95,10 +86,10 @@ Agent.prototype = {
 			alignment = alignment.add(neighbor);
 		}
 		
-		this.velocity = this.velocity.add(alignment.multiply(this.INFLUENCE_ALIGNMENT));
+		this.velocity = this.velocity.add(alignment.multiply(configuration.strengthAlignment));
 	},
 	
-	applyAttraction() {
+	applyAttraction(configuration) {
 		if(this.neighborsAttraction.length == 0)
 			return;
 		
@@ -110,20 +101,20 @@ Agent.prototype = {
 			attraction = attraction.add(neighbor);
 		}
 		
-		this.velocity = this.velocity.add(attraction.multiply(this.INFLUENCE_ATTRACTION));
+		this.velocity = this.velocity.add(attraction.multiply(configuration.strengthAttraction));
 	},
 	
-	applyGravity() {
-		this.velocity = this.velocity.add(this.position.subtract(new Vector(256, 256)).normalize().negate().multiply(this.INFLUENCE_GRAVITY));
+	applyGravity(configuration) {
+		this.velocity = this.velocity.add(this.position.subtract(new Vector(256, 256)).normalize().negate().multiply(configuration.strengthGravitation));
 	},
 	
-	react() {
-		this.velocity = this.velocity.normalize().multiply(this.baseSpeed);
+	react(configuration) {
+		this.velocity = this.velocity.normalize().multiply(configuration.agentSpeed);
 		
-		this.applyRepulsion();
-		this.applyAlignment();
-		this.applyAttraction();
-		this.applyGravity();
+		this.applyRepulsion(configuration);
+		this.applyAlignment(configuration);
+		this.applyAttraction(configuration);
+		this.applyGravity(configuration);
 	},
 	
 	update(context, timeStep, width, height) {

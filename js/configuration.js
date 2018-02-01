@@ -12,9 +12,9 @@ Configuration.prototype = {
 	},
 	
 	getInfluenceValues() {
-		this.radiusRepulsion = this.getSliderValue("zone-repulsion");
-		this.radiusAlignment = this.getSliderValue("zone-alignment") + this.radiusRepulsion;
-		this.radiusAttraction = this.getSliderValue("zone-attraction") + this.radiusAlignment;
+		this.radiusRepulsion = Number(this.getSliderValue("zone-repulsion"));
+		this.radiusAlignment = Number(this.getSliderValue("zone-alignment")) + this.radiusRepulsion;
+		this.radiusAttraction = Number(this.getSliderValue("zone-attraction")) + this.radiusAlignment;
 	},
 	
 	getValues() {

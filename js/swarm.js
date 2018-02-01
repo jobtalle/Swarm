@@ -6,9 +6,6 @@ function SwarmSim(canvas) {
 	this.agents = [];
 	
 	this.configure();
-	
-	for(var i = 0; i < 70; ++i)
-		this.agents.push(new Agent(new Vector(this.width / 2, this.height / 2)));
 }
 
 SwarmSim.prototype = {
@@ -58,7 +55,7 @@ SwarmSim.prototype = {
 	},
 	
 	update(context, timeStep) {
-		Agent.prototype.process(this.agents);
+		Agent.prototype.process(this.agents, this.configuration);
 		
 		for(var i = 0; i < this.agents.length; ++i)
 			this.agents[i].update(context, timeStep, this.width, this.height);
