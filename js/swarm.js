@@ -13,8 +13,21 @@ function SwarmSim(canvas) {
 
 SwarmSim.prototype = {
 	configure() {
-		this.configuration = new Configuration();
+		this.configuration = new Configuration(this.updateConfiguration.bind(this));
+        this.updateConfiguration();
 	},
+    
+    updateConfiguration() {
+        this.updateAgentCount();
+    },
+    
+    updateAgentCount() {
+        while(this.agents.length < this.configuration.agentCount)
+            this.agents.push(new Agent(new Vector(this.width / 2, this.height / 2)));
+        
+        while(this.agents.length > this.configuration.agentCount)
+            this.agents.pop();
+    },
 	
 	start() {
 		this.lastDate = new Date();

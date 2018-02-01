@@ -1,5 +1,6 @@
-function Configuration() {
+function Configuration(onChange) {
 	this.getValues();
+    this.onChange = onChange;
 }
 
 Configuration.prototype = {
@@ -25,5 +26,8 @@ Configuration.prototype = {
 		this.strengthGravitation = this.getSliderValue("strength-gravitation");
 		
 		this.getInfluenceValues();
+        
+        if(this.onChange != undefined)
+            this.onChange();
 	}
 }
