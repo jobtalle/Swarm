@@ -63,7 +63,7 @@
 						<tr>
 							<td>Attraction angle:</td>
 							<td>
-								<input class="input-slider" type="range" min="0" max="360" value="220" id="input-angle-attraction" onchange="sim.configure();">
+								<input class="input-slider" type="range" min="0" max="360" value="140" id="input-angle-attraction" onchange="sim.configure();">
 							</td>
 							<td>
 								<input class="input-value" type="text" readonly id="value-angle-attraction">
@@ -110,6 +110,6 @@
 				</div>
 			</div>
 		</div>
+		<script>sim = new SwarmSim(document.getElementById("renderer")); sim.start();</script>
 	</body>
-	<script>sim = new SwarmSim(document.getElementById("renderer")); sim.start();</script>
 </html>

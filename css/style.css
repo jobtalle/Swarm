@@ -10,7 +10,7 @@
 
 #renderer {
 	float: left;
-	background-color: #ffe4aa;
+	background-color: #deeaee;
 }
 
 #controls {
@@ -18,6 +18,7 @@
 }
 
 .input-slider {
+	min-width: 75px;
 	width: 100%;
 }
 

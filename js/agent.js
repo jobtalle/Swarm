@@ -10,9 +10,7 @@
 }
 
 Agent.prototype = {
-	COLOR_FILL: "#6666ff",
-	COLOR_BORDER: "#333333",
-	COLOR_REGION: "#aaaaaa",
+	COLOR_FILL: "#c94c4c",
 	LENGTH: 16,
 	WIDTH: 14,
 	WRAP_RADIUS: 16,
@@ -132,7 +130,7 @@ Agent.prototype = {
 		context.lineTo(0, 0);
 		context.lineTo(-this.LENGTH * 0.5, this.WIDTH * 0.5);
 		context.lineTo(this.LENGTH * 0.5, 0);
-		context.stroke();
+		context.closePath();
 		context.fill();
 		
 		context.restore();
