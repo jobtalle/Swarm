@@ -55,13 +55,15 @@ Agent.prototype = {
 				second.neighborsAlignment.push(first.velocity.normalize().multiply(strength));
 			}
 			else {
-				var strength = 1 - ((Math.sqrt(squaredDistance) - this.RADIUS_ALIGNMENT) / (this.RADIUS_ATTRACTION - this.RADIUS_ALIGNMENT));
-				var attraction = delta.normalize().multiply(strength);
+				var normalizedDelta = delta.normalize();
+                var strength = 1 - ((Math.sqrt(squaredDistance) - this.RADIUS_ALIGNMENT) / (this.RADIUS_ATTRACTION - this.RADIUS_ALIGNMENT));
+				var attraction = normalizedDelta.multiply(strength);
 				
-				// TODO: Check view angle for each agent
-				
-				first.neighborsAttraction.push(attraction);
-				second.neighborsAttraction.push(attraction.negate());
+                if(Math.acos(first.velocity.normalize().dot(normalizedDelta)) < first.viewAngle * 0.5)
+				    first.neighborsAttraction.push(attraction);
+                
+                if(Math.acos(second.velocity.normalize().dot(normalizedDelta.negate())) < second.viewAngle * 0.5)
+				    second.neighborsAttraction.push(attraction.negate());
 			}
 		}
 	},

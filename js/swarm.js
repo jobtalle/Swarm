@@ -12,6 +12,8 @@ function SwarmSim(canvas) {
 }
 
 SwarmSim.prototype = {
+    MAX_DT: 0.1,
+    
 	configure() {
 		this.configuration = new Configuration(this.updateConfiguration.bind(this));
         this.updateConfiguration();
@@ -40,6 +42,8 @@ SwarmSim.prototype = {
 		
 		if(timeStep < 0)
 			timeStep += 1;
+        else if(timeStep > this.MAX_DT)
+            timeStep = this.MAX_DT;
 		
 		this.lastDate = date;
 		
