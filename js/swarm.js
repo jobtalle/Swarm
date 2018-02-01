@@ -32,6 +32,11 @@ SwarmSim.prototype = {
 		this.lastDate = new Date();
 		this.animate();
 	},
+    
+    scatter() {
+        for(var i = 0; i < this.agents.length; ++i)
+            this.agents[i].scatter(this.width, this.height);
+    },
 	
 	getTimeStep() {
 		var date = new Date();

@@ -2,7 +2,6 @@
 	position,
 	velocity = Vector.prototype.fromAngle(Math.random() * Math.PI * 2)) {
 	this.position = position;
-    this.positionPrevious = new Vector(position.x, position.y);
     this.center = new Vector(position.x, position.y);
 	this.velocity = velocity;
 	this.neighborsRepulsion = [];
@@ -14,9 +13,9 @@ Agent.prototype = {
 	COLOR_FILL: "#6666ff",
 	COLOR_BORDER: "#333333",
 	COLOR_REGION: "#aaaaaa",
-	LENGTH: 12,
-	WIDTH: 10,
-	WRAP_RADIUS: 12,
+	LENGTH: 16,
+	WIDTH: 14,
+	WRAP_RADIUS: 16,
 	
 	process(agents, configuration) {
 		for(var firstIndex = 0; firstIndex < agents.length; ++firstIndex) {
@@ -26,6 +25,12 @@ Agent.prototype = {
 			agents[firstIndex].react(configuration);
 		}
 	},
+    
+    scatter(width, height) {
+        this.position.x = Math.random() * width;
+        this.position.y = Math.random() * height;
+        this.velocity = Vector.prototype.fromAngle(Math.random() * Math.PI * 2);
+    },
 	
 	interact(first, second, configuration) {
 		var delta = second.position.subtract(first.position);
