@@ -1,10 +1,9 @@
  function Agent(
-	position = new Vector(0, 0),
-	velocity = Vector.prototype.fromAngle(Math.random() * Math.PI * 2),
-	viewAngle = Math.PI * 1.3) {
+	position,
+	velocity = Vector.prototype.fromAngle(Math.random() * Math.PI * 2)) {
 	this.position = position;
+    this.center = new Vector(position.x, position.y);
 	this.velocity = velocity;
-	this.viewAngle = viewAngle;
 	this.neighborsRepulsion = [];
 	this.neighborsAlignment = [];
 	this.neighborsAttraction = [];
@@ -50,10 +49,10 @@ Agent.prototype = {
                 var strength = 1 - ((Math.sqrt(squaredDistance) - configuration.radiusAlignment) / (configuration.radiusAttraction - configuration.radiusAlignment));
 				var attraction = normalizedDelta.multiply(strength);
 				
-                if(Math.acos(first.velocity.normalize().dot(normalizedDelta)) < first.viewAngle * 0.5)
+                if(Math.acos(first.velocity.normalize().dot(normalizedDelta)) < configuration.angleAttraction)
 				    first.neighborsAttraction.push(attraction);
                 
-                if(Math.acos(second.velocity.normalize().dot(normalizedDelta.negate())) < second.viewAngle * 0.5)
+                if(Math.acos(second.velocity.normalize().dot(normalizedDelta.negate())) < configuration.angleAttraction)
 				    second.neighborsAttraction.push(attraction.negate());
 			}
 		}
@@ -105,7 +104,7 @@ Agent.prototype = {
 	},
 	
 	applyGravity(configuration) {
-		this.velocity = this.velocity.add(this.position.subtract(new Vector(256, 256)).normalize().negate().multiply(configuration.strengthGravitation));
+		this.velocity = this.velocity.add(this.position.subtract(this.center).normalize().negate().multiply(configuration.strengthGravitation));
 	},
 	
 	react(configuration) {

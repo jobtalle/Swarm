@@ -24,6 +24,7 @@ Configuration.prototype = {
 		this.strengthAlignment = this.getSliderValue("strength-alignment");
 		this.strengthAttraction = this.getSliderValue("strength-attraction");
 		this.strengthGravitation = this.getSliderValue("strength-gravitation");
+        this.angleAttraction = (Number(this.getSliderValue("angle-attraction")) / 360) * Math.PI;
 		
 		this.getInfluenceValues();
         

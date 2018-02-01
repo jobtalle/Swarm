@@ -61,6 +61,15 @@
 							</td>
 						</tr>
 						<tr>
+							<td>Attraction angle:</td>
+							<td>
+								<input class="input-slider" type="range" min="0" max="360" value="220" id="input-angle-attraction" onchange="sim.configure();">
+							</td>
+							<td>
+								<input class="input-value" type="text" readonly id="value-angle-attraction">
+							</td>
+						</tr>
+						<tr>
 							<td>Repulsion strength:</td>
 							<td>
 								<input class="input-slider" type="range" min="0" max="10" step="0.25" value="7" id="input-strength-repulsion" onchange="sim.configure();">
